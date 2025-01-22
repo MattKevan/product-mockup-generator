@@ -1,0 +1,791 @@
+[2025-01-22 10:10:50] Starting mockup generation for product: 3567
+[2025-01-22 10:10:50] No variants selected for product: 3567
+[2025-01-22 10:10:50] Processing product: 3567
+[2025-01-22 10:10:50] Auto frame enabled: 0
+[2025-01-22 10:10:50] Mockup generation disabled, cleaning up old frames
+[2025-01-22 10:12:37] Processing product: 3567
+[2025-01-22 10:12:37] POST data received: Array
+(
+    [_wpnonce] => 775a7e2b2a
+    [_wp_http_referer] => /wp-admin/post.php?post=3567&action=edit
+    [user_ID] => 1
+    [action] => editpost
+    [originalaction] => editpost
+    [post_author] => 1
+    [post_type] => product
+    [original_post_status] => publish
+    [referredby] => 
+    [_wp_original_http_referer] => 
+    [post_ID] => 3567
+    [meta-box-order-nonce] => a884481791
+    [closedpostboxesnonce] => 38afdaccb7
+    [original_post_title] => Joseph’s Coat (Alternanthera) | Plant vintage botanical art print
+    [post_title] => Joseph’s Coat (Alternanthera) | Plant vintage botanical art print
+    [samplepermalinknonce] => 3c3ad4c49d
+    [content] => Angel Wing (Caladium) leaf illustration by Benjamin Fawcett, a renowned woodblock printer considered to be one of the finest in the 19th century.
+---
+
+## Top quality
+
+* Carefully curated reproduction of a classic piece of vintage botanical art.
+* Digitally enhanced for superb colours and detail.
+* Printed on heavyweight museum-grade archival watercolour paper, with an off-white colour and textured finish.
+
+## Satisfaction guaranteed
+
+We want you to be really happy with your prints, so if there’s a problem with a piece in any way, we’ll exchange it, replace it or refund your money. See our orders and returns info for more details.
+
+## Print size and customisation
+
+Available in a range of sizes, this print has a border around the edges for easy framing. Please do get in touch if you’d like your print to be borderless or in a different size – we’re always happy to help.
+
+## Packaging and shipping
+
+We carefully ship your artwork flat in a cello sleeve and board-backed envelope and use global tracked and signed shipping as standard, so that you can be confident your prints will arrive safely.
+    [wp-preview] => 
+    [hidden_post_status] => publish
+    [post_status] => publish
+    [hidden_post_password] => 
+    [hidden_post_visibility] => public
+    [visibility] => public
+    [post_password] => 
+    [mm] => 01
+    [jj] => 18
+    [aa] => 2025
+    [hh] => 12
+    [mn] => 01
+    [ss] => 58
+    [hidden_mm] => 01
+    [cur_mm] => 01
+    [hidden_jj] => 18
+    [cur_jj] => 22
+    [hidden_aa] => 2025
+    [cur_aa] => 2025
+    [hidden_hh] => 12
+    [cur_hh] => 10
+    [hidden_mn] => 01
+    [cur_mn] => 12
+    [current_visibility] => visible
+    [current_featured] => no
+    [_visibility] => visible
+    [original_publish] => Update
+    [save] => Update
+    [_thumbnail_id] => 4105
+    [woocommerce_meta_nonce] => cc28ba407c
+    [product_image_gallery] => 
+    [tax_input] => Array
+        (
+            [product_cat] => Array
+                (
+                    [0] => 0
+                    [1] => 15
+                    [2] => 653
+                    [3] => 56
+                )
+
+            [product_tag] => Benjamin Fawcett, Botanical Print, Gardening wall art, Gift for gardeners, Josephs coat, Kitchen print, Leaf print, Leaves garden print, Nature wall decor, Plant illustration, Retro nature art, Vintage botanical, Vintage wall art
+            [product_brand] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+    [newproduct_cat] => New category name
+    [newproduct_cat_parent] => -1
+    [_ajax_nonce-add-product_cat] => 6ffb373a46
+    [newtag] => Array
+        (
+            [product_tag] => 
+        )
+
+    [astra_settings_meta_box] => 230852223d
+    [ast-site-content-layout] => default
+    [site-content-style] => default
+    [site-sidebar-layout] => default
+    [site-sidebar-style] => default
+    [theme-transparent-header-meta] => default
+    [adv-header-id-meta] => 
+    [stick-header-meta] => default
+    [newproduct_brand] => New Brand Name
+    [newproduct_brand_parent] => -1
+    [_ajax_nonce-add-product_brand] => 4f56b57561
+    [auto_frame_nonce] => 84e1c08e07
+    [selected_variants] => Array
+        (
+            [0] => 4089
+        )
+
+    [primary_variant] => 4089
+    [product-type] => variable
+    [_product_url] => 
+    [_button_text] => 
+    [_regular_price] => 
+    [_sale_price] => 
+    [_sale_price_dates_from] => 
+    [_sale_price_dates_to] => 
+    [_download_limit] => 
+    [_download_expiry] => 
+    [_sku] => 762113394
+    [_global_unique_id] => 
+    [_stock] => 1
+    [_original_stock] => 0
+    [_backorders] => no
+    [_low_stock_amount] => 
+    [_stock_status] => instock
+    [_weight] => 
+    [_length] => 
+    [_width] => 
+    [_height] => 
+    [product_shipping_class] => -1
+    [_purchase_note] => 
+    [menu_order] => 0
+    [product_id] => 3567
+    [swatches_action] => cfvsw_save_product_swatches_data
+    [security] => 5ba7b10a4e
+    [meta] => Array
+        (
+            [48304] => Array
+                (
+                    [key] => ast-site-content-layout
+                    [value] => default
+                )
+
+            [48313] => Array
+                (
+                    [key] => astra-migrate-meta-layouts
+                    [value] => set
+                )
+
+            [48305] => Array
+                (
+                    [key] => site-content-style
+                    [value] => default
+                )
+
+            [48302] => Array
+                (
+                    [key] => site-sidebar-layout
+                    [value] => default
+                )
+
+            [48306] => Array
+                (
+                    [key] => site-sidebar-style
+                    [value] => default
+                )
+
+            [48309] => Array
+                (
+                    [key] => stick-header-meta
+                    [value] => default
+                )
+
+            [48307] => Array
+                (
+                    [key] => theme-transparent-header-meta
+                    [value] => default
+                )
+
+            [40280] => Array
+                (
+                    [key] => total_sales
+                    [value] => 0
+                )
+
+        )
+
+    [_ajax_nonce] => 477be55fe3
+    [metakeyselect] => #NONE#
+    [metakeyinput] => 
+    [metavalue] => 
+    [_ajax_nonce-add-meta] => fc785bea8c
+    [post_name] => josephs-coat-alternanthera-plant-vintage-botanical-art-print
+    [excerpt] => 
+    [add_comment_nonce] => 8f9e7cf009
+    [_ajax_fetch_list_nonce] => 8274df7009
+    [post_mime_type] => 
+    [ID] => 3567
+    [post_content] => Angel Wing (Caladium) leaf illustration by Benjamin Fawcett, a renowned woodblock printer considered to be one of the finest in the 19th century.
+---
+
+## Top quality
+
+* Carefully curated reproduction of a classic piece of vintage botanical art.
+* Digitally enhanced for superb colours and detail.
+* Printed on heavyweight museum-grade archival watercolour paper, with an off-white colour and textured finish.
+
+## Satisfaction guaranteed
+
+We want you to be really happy with your prints, so if there’s a problem with a piece in any way, we’ll exchange it, replace it or refund your money. See our orders and returns info for more details.
+
+## Print size and customisation
+
+Available in a range of sizes, this print has a border around the edges for easy framing. Please do get in touch if you’d like your print to be borderless or in a different size – we’re always happy to help.
+
+## Packaging and shipping
+
+We carefully ship your artwork flat in a cello sleeve and board-backed envelope and use global tracked and signed shipping as standard, so that you can be confident your prints will arrive safely.
+    [post_excerpt] => 
+    [comment_status] => closed
+    [ping_status] => closed
+)
+
+[2025-01-22 10:12:37] Auto frame enabled value: 0
+[2025-01-22 10:12:37] Mockup generation disabled, cleaning up old frames
+[2025-01-22 10:14:10] Processing product: 3567
+[2025-01-22 10:14:10] POST data received: Array
+(
+    [_wpnonce] => 775a7e2b2a
+    [_wp_http_referer] => /wp-admin/post.php?post=3567&action=edit
+    [user_ID] => 1
+    [action] => editpost
+    [originalaction] => editpost
+    [post_author] => 1
+    [post_type] => product
+    [original_post_status] => publish
+    [referredby] => http://seagull.local/product/josephs-coat-alternanthera-plant-vintage-botanical-art-print/
+    [_wp_original_http_referer] => http://seagull.local/product/josephs-coat-alternanthera-plant-vintage-botanical-art-print/
+    [post_ID] => 3567
+    [meta-box-order-nonce] => a884481791
+    [closedpostboxesnonce] => 38afdaccb7
+    [original_post_title] => Joseph’s Coat (Alternanthera) | Plant vintage botanical art print
+    [post_title] => Joseph’s Coat (Alternanthera) | Plant vintage botanical art print
+    [samplepermalinknonce] => 3c3ad4c49d
+    [content] => Angel Wing (Caladium) leaf illustration by Benjamin Fawcett, a renowned woodblock printer considered to be one of the finest in the 19th century.
+---
+
+## Top quality
+
+* Carefully curated reproduction of a classic piece of vintage botanical art.
+* Digitally enhanced for superb colours and detail.
+* Printed on heavyweight museum-grade archival watercolour paper, with an off-white colour and textured finish.
+
+## Satisfaction guaranteed
+
+We want you to be really happy with your prints, so if there’s a problem with a piece in any way, we’ll exchange it, replace it or refund your money. See our orders and returns info for more details.
+
+## Print size and customisation
+
+Available in a range of sizes, this print has a border around the edges for easy framing. Please do get in touch if you’d like your print to be borderless or in a different size – we’re always happy to help.
+
+## Packaging and shipping
+
+We carefully ship your artwork flat in a cello sleeve and board-backed envelope and use global tracked and signed shipping as standard, so that you can be confident your prints will arrive safely.
+    [wp-preview] => 
+    [hidden_post_status] => publish
+    [post_status] => publish
+    [hidden_post_password] => 
+    [hidden_post_visibility] => public
+    [visibility] => public
+    [post_password] => 
+    [mm] => 01
+    [jj] => 18
+    [aa] => 2025
+    [hh] => 12
+    [mn] => 01
+    [ss] => 58
+    [hidden_mm] => 01
+    [cur_mm] => 01
+    [hidden_jj] => 18
+    [cur_jj] => 22
+    [hidden_aa] => 2025
+    [cur_aa] => 2025
+    [hidden_hh] => 12
+    [cur_hh] => 10
+    [hidden_mn] => 01
+    [cur_mn] => 13
+    [current_visibility] => visible
+    [current_featured] => no
+    [_visibility] => visible
+    [original_publish] => Update
+    [save] => Update
+    [_thumbnail_id] => 4105
+    [woocommerce_meta_nonce] => cc28ba407c
+    [product_image_gallery] => 
+    [tax_input] => Array
+        (
+            [product_cat] => Array
+                (
+                    [0] => 0
+                    [1] => 15
+                    [2] => 653
+                    [3] => 56
+                )
+
+            [product_tag] => Benjamin Fawcett, Botanical Print, Gardening wall art, Gift for gardeners, Josephs coat, Kitchen print, Leaf print, Leaves garden print, Nature wall decor, Plant illustration, Retro nature art, Vintage botanical, Vintage wall art
+            [product_brand] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+    [newproduct_cat] => New category name
+    [newproduct_cat_parent] => -1
+    [_ajax_nonce-add-product_cat] => 6ffb373a46
+    [newtag] => Array
+        (
+            [product_tag] => 
+        )
+
+    [astra_settings_meta_box] => 230852223d
+    [ast-site-content-layout] => default
+    [site-content-style] => default
+    [site-sidebar-layout] => default
+    [site-sidebar-style] => default
+    [theme-transparent-header-meta] => default
+    [adv-header-id-meta] => 
+    [stick-header-meta] => default
+    [newproduct_brand] => New Brand Name
+    [newproduct_brand_parent] => -1
+    [_ajax_nonce-add-product_brand] => 4f56b57561
+    [auto_frame_nonce] => 84e1c08e07
+    [selected_variants] => Array
+        (
+            [0] => 4089
+        )
+
+    [primary_variant] => 4089
+    [product-type] => variable
+    [_product_url] => 
+    [_button_text] => 
+    [_regular_price] => 
+    [_sale_price] => 
+    [_sale_price_dates_from] => 
+    [_sale_price_dates_to] => 
+    [_download_limit] => 
+    [_download_expiry] => 
+    [_sku] => 762113394
+    [_global_unique_id] => 
+    [_stock] => 1
+    [_original_stock] => 0
+    [_backorders] => no
+    [_low_stock_amount] => 
+    [_stock_status] => instock
+    [_weight] => 
+    [_length] => 
+    [_width] => 
+    [_height] => 
+    [product_shipping_class] => -1
+    [_purchase_note] => 
+    [menu_order] => 0
+    [product_id] => 3567
+    [swatches_action] => cfvsw_save_product_swatches_data
+    [security] => 5ba7b10a4e
+    [meta] => Array
+        (
+            [48304] => Array
+                (
+                    [key] => ast-site-content-layout
+                    [value] => default
+                )
+
+            [48314] => Array
+                (
+                    [key] => astra-migrate-meta-layouts
+                    [value] => set
+                )
+
+            [48305] => Array
+                (
+                    [key] => site-content-style
+                    [value] => default
+                )
+
+            [48302] => Array
+                (
+                    [key] => site-sidebar-layout
+                    [value] => default
+                )
+
+            [48306] => Array
+                (
+                    [key] => site-sidebar-style
+                    [value] => default
+                )
+
+            [48309] => Array
+                (
+                    [key] => stick-header-meta
+                    [value] => default
+                )
+
+            [48307] => Array
+                (
+                    [key] => theme-transparent-header-meta
+                    [value] => default
+                )
+
+            [40280] => Array
+                (
+                    [key] => total_sales
+                    [value] => 0
+                )
+
+        )
+
+    [_ajax_nonce] => 477be55fe3
+    [metakeyselect] => #NONE#
+    [metakeyinput] => 
+    [metavalue] => 
+    [_ajax_nonce-add-meta] => fc785bea8c
+    [post_name] => josephs-coat-alternanthera-plant-vintage-botanical-art-print
+    [excerpt] => 
+    [add_comment_nonce] => 8f9e7cf009
+    [_ajax_fetch_list_nonce] => 8274df7009
+    [post_mime_type] => 
+    [ID] => 3567
+    [post_content] => Angel Wing (Caladium) leaf illustration by Benjamin Fawcett, a renowned woodblock printer considered to be one of the finest in the 19th century.
+---
+
+## Top quality
+
+* Carefully curated reproduction of a classic piece of vintage botanical art.
+* Digitally enhanced for superb colours and detail.
+* Printed on heavyweight museum-grade archival watercolour paper, with an off-white colour and textured finish.
+
+## Satisfaction guaranteed
+
+We want you to be really happy with your prints, so if there’s a problem with a piece in any way, we’ll exchange it, replace it or refund your money. See our orders and returns info for more details.
+
+## Print size and customisation
+
+Available in a range of sizes, this print has a border around the edges for easy framing. Please do get in touch if you’d like your print to be borderless or in a different size – we’re always happy to help.
+
+## Packaging and shipping
+
+We carefully ship your artwork flat in a cello sleeve and board-backed envelope and use global tracked and signed shipping as standard, so that you can be confident your prints will arrive safely.
+    [post_excerpt] => 
+    [comment_status] => closed
+    [ping_status] => closed
+)
+
+[2025-01-22 10:14:10] Auto frame enabled value: 0
+[2025-01-22 10:14:10] Mockup generation disabled, cleaning up old frames
+[2025-01-22 10:31:48] Processing product: 3572
+[2025-01-22 10:31:48] Auto frame enabled value: 1
+[2025-01-22 10:31:48] Selected variants: Array
+(
+    [0] => 4097
+)
+
+[2025-01-22 10:31:48] Primary variant: 4097
+[2025-01-22 10:31:48] Starting mockup generation for product: 3572
+[2025-01-22 10:31:48] Product image file not found: /Users/mattkevan/Local Sites/seagull/app/public/wp-content/uploads/2025/01/il_fullxfull.3247945533_cbqc.jpg
+[2025-01-22 10:31:48] Starting mockup generation for product: 3572
+[2025-01-22 10:31:48] Product image file not found: /Users/mattkevan/Local Sites/seagull/app/public/wp-content/uploads/2025/01/il_fullxfull.3247945533_cbqc.jpg
+[2025-01-22 10:32:15] Starting mockup generation for product: 3572
+[2025-01-22 10:32:15] Selected variants: Array
+(
+    [0] => 4097
+)
+
+[2025-01-22 10:32:15] Image orientation: portrait
+[2025-01-22 10:32:15] Variant 4097 orientations: Array
+(
+    [0] => landscape
+)
+
+[2025-01-22 10:32:15] No valid templates found for image orientation: portrait
+[2025-01-22 10:32:15] Processing product: 3572
+[2025-01-22 10:32:15] Auto frame enabled value: 1
+[2025-01-22 10:32:15] Selected variants: Array
+(
+    [0] => 4097
+)
+
+[2025-01-22 10:32:15] Primary variant: 4097
+[2025-01-22 10:32:15] Starting mockup generation for product: 3572
+[2025-01-22 10:32:15] Selected variants: Array
+(
+    [0] => 4097
+)
+
+[2025-01-22 10:32:15] Image orientation: portrait
+[2025-01-22 10:32:15] Variant 4097 orientations: Array
+(
+    [0] => landscape
+)
+
+[2025-01-22 10:32:15] No valid templates found for image orientation: portrait
+[2025-01-22 10:32:15] Starting mockup generation for product: 3572
+[2025-01-22 10:32:15] Selected variants: Array
+(
+    [0] => 4097
+)
+
+[2025-01-22 10:32:15] Image orientation: portrait
+[2025-01-22 10:32:15] Variant 4097 orientations: Array
+(
+    [0] => landscape
+)
+
+[2025-01-22 10:32:15] No valid templates found for image orientation: portrait
+[2025-01-22 10:32:30] Processing product: 3572
+[2025-01-22 10:32:30] Auto frame enabled value: 1
+[2025-01-22 10:32:30] Selected variants: Array
+(
+    [0] => 4089
+)
+
+[2025-01-22 10:32:30] Primary variant: 4089
+[2025-01-22 10:32:30] Starting mockup generation for product: 3572
+[2025-01-22 10:32:30] Selected variants: Array
+(
+    [0] => 4089
+)
+
+[2025-01-22 10:32:30] Image orientation: portrait
+[2025-01-22 10:32:30] Variant 4089 orientations: Array
+(
+    [0] => portrait
+)
+
+[2025-01-22 10:32:30] Processing variant: 4089
+[2025-01-22 10:32:30] Template settings: Array
+(
+    [dimensions] => Array
+        (
+            [width] => 1222
+            [height] => 1500
+        )
+
+    [product_max_size] => 1360
+    [alignment] => center
+    [offset] => Array
+        (
+            [x] => 0
+            [y] => 0
+        )
+
+    [blend_mode] => multiply
+)
+
+[2025-01-22 10:32:34] Successfully generated mockup: 4106
+[2025-01-22 10:32:34] Saving generated mockups: Array
+(
+    [4089] => 4106
+)
+
+[2025-01-22 10:32:34] Starting mockup generation for product: 3572
+[2025-01-22 10:32:34] Selected variants: Array
+(
+    [0] => 4089
+)
+
+[2025-01-22 10:32:34] Image orientation: portrait
+[2025-01-22 10:32:34] Variant 4089 orientations: Array
+(
+    [0] => portrait
+)
+
+[2025-01-22 10:32:34] Cleaning up previous mockups: Array
+(
+    [4089] => 4106
+)
+
+[2025-01-22 10:32:34] Processing variant: 4089
+[2025-01-22 10:32:34] Template settings: Array
+(
+    [dimensions] => Array
+        (
+            [width] => 1222
+            [height] => 1500
+        )
+
+    [product_max_size] => 1360
+    [alignment] => center
+    [offset] => Array
+        (
+            [x] => 0
+            [y] => 0
+        )
+
+    [blend_mode] => multiply
+)
+
+[2025-01-22 10:32:38] Successfully generated mockup: 4107
+[2025-01-22 10:32:38] Saving generated mockups: Array
+(
+    [4089] => 4107
+)
+
+[2025-01-22 10:33:08] Processing product: 3567
+[2025-01-22 10:33:08] Auto frame enabled value: 1
+[2025-01-22 10:33:08] Selected variants: Array
+(
+    [0] => 4089
+)
+
+[2025-01-22 10:33:08] Primary variant: 4089
+[2025-01-22 10:33:08] Starting mockup generation for product: 3567
+[2025-01-22 10:33:08] Selected variants: Array
+(
+    [0] => 4089
+)
+
+[2025-01-22 10:33:08] Image orientation: portrait
+[2025-01-22 10:33:08] Variant 4089 orientations: Array
+(
+    [0] => portrait
+)
+
+[2025-01-22 10:33:08] Processing variant: 4089
+[2025-01-22 10:33:08] Template settings: Array
+(
+    [dimensions] => Array
+        (
+            [width] => 1222
+            [height] => 1500
+        )
+
+    [product_max_size] => 1360
+    [alignment] => center
+    [offset] => Array
+        (
+            [x] => 0
+            [y] => 0
+        )
+
+    [blend_mode] => multiply
+)
+
+[2025-01-22 10:33:12] Successfully generated mockup: 4108
+[2025-01-22 10:33:12] Saving generated mockups: Array
+(
+    [4089] => 4108
+)
+
+[2025-01-22 10:33:12] Starting mockup generation for product: 3567
+[2025-01-22 10:33:12] Selected variants: Array
+(
+    [0] => 4089
+)
+
+[2025-01-22 10:33:12] Image orientation: portrait
+[2025-01-22 10:33:12] Variant 4089 orientations: Array
+(
+    [0] => portrait
+)
+
+[2025-01-22 10:33:12] Cleaning up previous mockups: Array
+(
+    [4089] => 4108
+)
+
+[2025-01-22 10:33:12] Processing variant: 4089
+[2025-01-22 10:33:12] Template settings: Array
+(
+    [dimensions] => Array
+        (
+            [width] => 1222
+            [height] => 1500
+        )
+
+    [product_max_size] => 1360
+    [alignment] => center
+    [offset] => Array
+        (
+            [x] => 0
+            [y] => 0
+        )
+
+    [blend_mode] => multiply
+)
+
+[2025-01-22 10:33:15] Successfully generated mockup: 4109
+[2025-01-22 10:33:15] Saving generated mockups: Array
+(
+    [4089] => 4109
+)
+
+[2025-01-22 10:34:05] Processing product: 3573
+[2025-01-22 10:34:05] Auto frame enabled value: 1
+[2025-01-22 10:34:05] Selected variants: Array
+(
+    [0] => 4089
+)
+
+[2025-01-22 10:34:05] Primary variant: 4089
+[2025-01-22 10:34:05] Starting mockup generation for product: 3573
+[2025-01-22 10:34:05] Selected variants: Array
+(
+    [0] => 4089
+)
+
+[2025-01-22 10:34:05] Image orientation: portrait
+[2025-01-22 10:34:05] Variant 4089 orientations: Array
+(
+    [0] => portrait
+)
+
+[2025-01-22 10:34:05] Processing variant: 4089
+[2025-01-22 10:34:05] Template settings: Array
+(
+    [dimensions] => Array
+        (
+            [width] => 1222
+            [height] => 1500
+        )
+
+    [product_max_size] => 1360
+    [alignment] => center
+    [offset] => Array
+        (
+            [x] => 0
+            [y] => 0
+        )
+
+    [blend_mode] => multiply
+)
+
+[2025-01-22 10:34:07] Successfully generated mockup: 4110
+[2025-01-22 10:34:07] Saving generated mockups: Array
+(
+    [4089] => 4110
+)
+
+[2025-01-22 10:34:07] Starting mockup generation for product: 3573
+[2025-01-22 10:34:07] Selected variants: Array
+(
+    [0] => 4089
+)
+
+[2025-01-22 10:34:07] Image orientation: portrait
+[2025-01-22 10:34:07] Variant 4089 orientations: Array
+(
+    [0] => portrait
+)
+
+[2025-01-22 10:34:07] Cleaning up previous mockups: Array
+(
+    [4089] => 4110
+)
+
+[2025-01-22 10:34:07] Processing variant: 4089
+[2025-01-22 10:34:07] Template settings: Array
+(
+    [dimensions] => Array
+        (
+            [width] => 1222
+            [height] => 1500
+        )
+
+    [product_max_size] => 1360
+    [alignment] => center
+    [offset] => Array
+        (
+            [x] => 0
+            [y] => 0
+        )
+
+    [blend_mode] => multiply
+)
+
+[2025-01-22 10:34:08] Successfully generated mockup: 4111
+[2025-01-22 10:34:08] Saving generated mockups: Array
+(
+    [4089] => 4111
+)
+

@@ -1,0 +1,99 @@
+.frame-options-container {
+    padding: 15px;
+    background: #fff;
+}
+
+.frame-selection {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+}
+
+.frame-selection label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.debug-info {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+}
+
+.debug-info h4 {
+    margin-top: 0;
+}
+
+#frame-preview-container {
+    padding: 20px;
+    background: #fff;
+}
+
+.preview-controls {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#preview-frame-select {
+    min-width: 200px;
+}
+
+.frame-preview-loading {
+    padding: 20px;
+    text-align: center;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+}
+
+.frame-preview-loading .spinner {
+    float: none;
+    margin: 0 10px 0 0;
+}
+
+.frame-preview-image {
+    max-width: 100%;
+    height: auto;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#frame-preview-error {
+    margin: 20px 0;
+}
+
+.template-image-upload {
+    margin: 10px 0;
+}
+
+.template-image-upload .preview-image {
+    margin: 10px 0;
+    padding: 10px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    display: inline-block;
+}
+
+.template-image-upload .button {
+    margin-right: 10px;
+}
+
+.template-image-upload img {
+    max-width: 200px;
+    height: auto;
+    display: block;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 782px) {
+    .preview-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #preview-frame-select {
+        width: 100%;
+    }
+}
