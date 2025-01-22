@@ -14,17 +14,19 @@ class Mockup_Generator {
         // Initialize components
         $this->settings = new Mockup_Generator_Settings($this);
         $this->settings->maybe_enable_global_mockups();
-
+    
         $this->batch_processor = new Mockup_Generator_Batch_Processor($this);
         $this->template_manager = new Mockup_Generator_Template();
         $this->image_processor = new Mockup_Generator_Image();
         $this->product_manager = new Mockup_Generator_Product($this);
-
+    
         // Add metabox to product
         add_action('admin_menu', [$this, 'add_menu']);
         
-        // Product save and update hooks
-        add_action('woocommerce_process_product_meta', [$this, 'process_product'], 10, 1);
+        // Product save hooks - Update these lines
+        // Remove this line:
+        // add_action('woocommerce_process_product_meta', [$this, 'process_product'], 10, 1);
+        // Keep this line:
         add_action('woocommerce_admin_process_product_object', [$this, 'handle_product_save']);
         
         // Image change hooks
@@ -63,33 +65,87 @@ class Mockup_Generator {
     }
 
     public function render_meta_box($post) {
+        wp_nonce_field('auto_frame_generator', 'auto_frame_nonce');
+        
         $image_id = get_post_thumbnail_id($post->ID);
         $enabled = get_post_meta($post->ID, '_auto_frame_enabled', true);
         
         // Get global settings
         $defaults = get_option('mockup_generator_defaults', []);
         $is_globally_enabled = !empty($defaults['enabled_globally']);
+        $default_categories = isset($defaults['enabled_categories']) ? $defaults['enabled_categories'] : [];
+        $default_primary = isset($defaults['default_category']) ? $defaults['default_category'] : '';
         
         if ($image_id) {
             $orientation = $this->image_processor->get_image_orientation($image_id);
             
-            // Simple query for variants
-            $variants = get_posts([
-                'post_type' => Mockup_Generator_Template::POST_TYPE,
-                'posts_per_page' => -1,
-                'orderby' => 'title',
+            // Get categories
+            $categories = get_terms([
+                'taxonomy' => Mockup_Generator_Template::TEMPLATE_CAT,
+                'hide_empty' => false,
+                'orderby' => 'name',
                 'order' => 'ASC'
             ]);
     
-            // Get saved options
-            $selected_variants = get_post_meta($post->ID, '_selected_variants', true) ?: array();
-            $primary_variant = get_post_meta($post->ID, '_primary_variant', true);
+            // Get saved options or use defaults
+            $enabled_categories = get_post_meta($post->ID, '_enabled_categories', true);
+            $primary_category = get_post_meta($post->ID, '_primary_category', true);
             $framed_images = get_post_meta($post->ID, '_framed_images', true) ?: array();
             $frame_errors = get_post_meta($post->ID, '_frame_generation_errors', true);
+    
+            // Use defaults if no settings saved or if globally enabled
+            if (empty($enabled_categories) || ($is_globally_enabled && $enabled === '')) {
+                $enabled_categories = $default_categories;
+                $primary_category = $default_primary;
+            }
+    
+            // Debug log for variant fetching
+            $this->log_debug("Fetching variants for orientation: " . $orientation);
+    
+            // Get available variants for each category
+            $category_variants = [];
+            foreach ($categories as $category) {
+                $this->log_debug("Processing category: " . $category->term_id . " - " . $category->name);
+                
+                // Get all variants for this category
+                $variants = get_posts([
+                    'post_type' => Mockup_Generator_Template::POST_TYPE,
+                    'numberposts' => -1,
+                    'tax_query' => [
+                        [
+                            'taxonomy' => Mockup_Generator_Template::TEMPLATE_CAT,
+                            'field' => 'term_id',
+                            'terms' => $category->term_id
+                        ]
+                    ]
+                ]);
+    
+                $this->log_debug("Found " . count($variants) . " total variants for category " . $category->term_id);
+    
+                // Filter variants by orientation
+                $matching_variants = [];
+                foreach ($variants as $variant) {
+                    $terms = wp_get_object_terms($variant->ID, 'mockup_orientation', ['fields' => 'slugs']);
+                    $this->log_debug("Variant " . $variant->ID . " orientations: " . print_r($terms, true));
+                    
+                    // Include variant if it has no orientation set or matches current orientation
+                    if (empty($terms) || in_array(strtolower($orientation), $terms)) {
+                        $matching_variants[] = $variant;
+                        $this->log_debug("Added variant " . $variant->ID . " to matching variants");
+                    }
+                }
+    
+                if (!empty($matching_variants)) {
+                    $category_variants[$category->term_id] = $matching_variants;
+                    $this->log_debug("Category " . $category->term_id . " has " . count($matching_variants) . " matching variants");
+                } else {
+                    $this->log_debug("No matching variants found for category " . $category->term_id);
+                }
+            }
+    
+            // Pass all variables to template
+            include plugin_dir_path(__FILE__) . 'views/meta-box.php';
         }
-        
-        wp_nonce_field('auto_frame_generator', 'auto_frame_nonce');
-        include plugin_dir_path(__FILE__) . 'views/meta-box.php';
     }
 
     public function handle_product_save($product) {
@@ -99,18 +155,48 @@ class Mockup_Generator {
             !wp_verify_nonce($_POST['auto_frame_nonce'], 'auto_frame_generator')) {
             return;
         }
-
+    
+        $this->log_debug("Starting product save for product ID: " . $product_id);
+    
+        // Clear previous errors
+        delete_post_meta($product_id, '_frame_generation_errors');
+    
         $enabled = isset($_POST['auto_frame_enabled']) ? '1' : '0';
+        $this->log_debug("Auto frame enabled value: " . $enabled);
+        
         update_post_meta($product_id, '_auto_frame_enabled', $enabled);
-
+    
         if ($enabled === '1') {
-            $selected_variants = isset($_POST['selected_variants']) ? array_map('absint', $_POST['selected_variants']) : array();
-            $primary_variant = isset($_POST['primary_variant']) ? absint($_POST['primary_variant']) : '';
-
-            update_post_meta($product_id, '_selected_variants', $selected_variants);
-            update_post_meta($product_id, '_primary_variant', $primary_variant);
-
-            $this->generate_mockups_for_product($product_id);
+            // Get categories from POST or use defaults
+            $enabled_categories = isset($_POST['enabled_categories']) ? array_map('absint', $_POST['enabled_categories']) : [];
+            $primary_category = isset($_POST['primary_category']) ? absint($_POST['primary_category']) : '';
+    
+            $this->log_debug("Selected categories: " . print_r($enabled_categories, true));
+            $this->log_debug("Primary category: " . $primary_category);
+    
+            // Use defaults if no categories selected
+            if (empty($enabled_categories)) {
+                $defaults = get_option('mockup_generator_defaults', []);
+                $enabled_categories = isset($defaults['enabled_categories']) ? $defaults['enabled_categories'] : [];
+                $primary_category = isset($defaults['default_category']) ? $defaults['default_category'] : '';
+                
+                $this->log_debug("Using default categories: " . print_r($enabled_categories, true));
+                $this->log_debug("Using default primary category: " . $primary_category);
+            }
+    
+            update_post_meta($product_id, '_enabled_categories', $enabled_categories);
+            update_post_meta($product_id, '_primary_category', $primary_category);
+    
+            // Generate mockups
+            $this->generate_mockups_for_categories($product_id, $enabled_categories, $primary_category);
+        } else {
+            $this->log_debug("Mockup generation disabled - cleaning up");
+            // Clean up if disabled
+            $this->cleanup_frames($product_id, get_post_meta($product_id, '_framed_images', true));
+            delete_post_meta($product_id, '_framed_images');
+            delete_post_meta($product_id, '_enabled_categories');
+            delete_post_meta($product_id, '_primary_category');
+            delete_post_meta($product_id, '_original_image_hash');
         }
     }
 
@@ -157,76 +243,108 @@ class Mockup_Generator {
             }
         }
     }
-    public function process_product($product_id) {
-        $this->log_debug("Processing product: " . $product_id);
-        
-        if (!isset($_POST['auto_frame_nonce']) || 
-            !wp_verify_nonce($_POST['auto_frame_nonce'], 'auto_frame_generator')) {
-            $this->log_debug("Nonce verification failed");
-            return;
+
+    private function generate_mockups_for_categories($product_id, $categories, $primary_category) {
+        try {
+            $this->log_debug("Starting mockup generation for product: " . $product_id);
+            $this->log_debug("Categories: " . print_r($categories, true));
+            $this->log_debug("Primary category: " . $primary_category);
+    
+            $image_id = get_post_thumbnail_id($product_id);
+            if (!$image_id) {
+                throw new Exception("No featured image found for product");
+            }
+    
+            $orientation = $this->image_processor->get_image_orientation($image_id);
+            $this->log_debug("Image orientation: " . $orientation);
+    
+            $generated_mockups = [];
+            $gallery_images = [];
+            $category_variant_map = array();
+            $errors = array();
+    
+            foreach ($categories as $category_id) {
+                try {
+                    $this->log_debug("Processing category: " . $category_id);
+                    
+                    $variant_id = $this->get_best_variant_for_category($category_id, $orientation);
+                    if (!$variant_id) {
+                        throw new Exception("No matching variant found for category");
+                    }
+                    
+                    $this->log_debug("Selected variant: " . $variant_id);
+                    
+                    $mockup_id = $this->generate_single_mockup($product_id, $image_id, $variant_id);
+                    if (!$mockup_id) {
+                        throw new Exception("Failed to generate mockup");
+                    }
+                    
+                    $this->log_debug("Generated mockup ID: " . $mockup_id);
+                    
+                    $generated_mockups[$variant_id] = $mockup_id;
+                    $category_variant_map[$category_id] = $variant_id;
+                    
+                    if ($category_id !== $primary_category) {
+                        $gallery_images[] = $mockup_id;
+                    }
+                } catch (Exception $e) {
+                    $errors[] = "Category {$category_id}: " . $e->getMessage();
+                }
+            }
+    
+            if (!empty($errors)) {
+                update_post_meta($product_id, '_frame_generation_errors', $errors);
+            }
+    
+            if (!empty($generated_mockups)) {
+                update_post_meta($product_id, '_framed_images', $generated_mockups);
+                update_post_meta($product_id, '_category_variant_map', $category_variant_map);
+                
+                if (!empty($gallery_images)) {
+                    update_post_meta($product_id, '_product_image_gallery', implode(',', $gallery_images));
+                }
+                return true;
+            }
+    
+            return false;
+    
+        } catch (Exception $e) {
+            $this->log_debug("Error in generate_mockups_for_categories: " . $e->getMessage());
+            update_post_meta($product_id, '_frame_generation_errors', [$e->getMessage()]);
+            return false;
         }
+    }
     
-        // Clear previous errors
-        delete_post_meta($product_id, '_frame_generation_errors');
-    
-        // Always use explicit checkbox value
-        $enabled = isset($_POST['auto_frame_enabled']) ? '1' : '0';
-        $this->log_debug("Auto frame enabled value: " . $enabled);
+    private function get_best_variant_for_category($category_id, $orientation) {
+        $this->log_debug("Getting best variant for category {$category_id} with orientation {$orientation}");
         
-        // Always store the explicit setting
-        update_post_meta($product_id, '_auto_frame_enabled', $enabled);
+        $variants = get_posts([
+            'post_type' => Mockup_Generator_Template::POST_TYPE,
+            'numberposts' => -1,
+            'tax_query' => [
+                [
+                    'taxonomy' => Mockup_Generator_Template::TEMPLATE_CAT,
+                    'field' => 'term_id',
+                    'terms' => $category_id
+                ]
+            ]
+        ]);
     
-        // If disabled, clean up old frames
-        if ($enabled !== '1') {
-            $this->log_debug("Mockup generation disabled, cleaning up old frames");
-            $previous_frames = get_post_meta($product_id, '_framed_images', true) ?: array();
-            $this->cleanup_frames($product_id, $previous_frames);
-            delete_post_meta($product_id, '_framed_images');
-            delete_post_meta($product_id, '_selected_variants');
-            delete_post_meta($product_id, '_primary_variant');
-            delete_post_meta($product_id, '_original_image_hash');
-            return;
-        }
+        $this->log_debug("Found " . count($variants) . " total variants");
     
-        $selected_variants = isset($_POST['selected_variants']) ? array_map('absint', $_POST['selected_variants']) : [];
-        $primary_variant = isset($_POST['primary_variant']) ? absint($_POST['primary_variant']) : '';
-        
-        // If no variants selected, use defaults from settings
-        if (empty($selected_variants)) {
-            $defaults = get_option('mockup_generator_defaults', []);
-            if (!empty($defaults['default_category'])) {
-                $variants = get_posts([
-                    'post_type' => Mockup_Generator_Template::POST_TYPE,
-                    'numberposts' => -1,
-                    'tax_query' => [
-                        [
-                            'taxonomy' => Mockup_Generator_Template::TEMPLATE_CAT,
-                            'field' => 'term_id',
-                            'terms' => $defaults['default_category']
-                        ]
-                    ]
-                ]);
-                $selected_variants = array_map(function($variant) {
-                    return $variant->ID;
-                }, $variants);
-                $primary_variant = !empty($selected_variants) ? reset($selected_variants) : '';
+        foreach ($variants as $variant) {
+            $terms = wp_get_object_terms($variant->ID, 'mockup_orientation', ['fields' => 'slugs']);
+            $this->log_debug("Checking variant {$variant->ID} with orientations: " . print_r($terms, true));
+            
+            // Include variant if it has no orientation set or matches current orientation
+            if (empty($terms) || in_array(strtolower($orientation), $terms)) {
+                $this->log_debug("Found matching variant: " . $variant->ID);
+                return $variant->ID;
             }
         }
-        
-        $this->log_debug("Selected variants: " . print_r($selected_variants, true));
-        $this->log_debug("Primary variant: " . $primary_variant);
-        
-        update_post_meta($product_id, '_selected_variants', $selected_variants);
-        update_post_meta($product_id, '_primary_variant', $primary_variant);
     
-        if (empty($selected_variants)) {
-            $this->log_debug("No variants selected or available");
-            update_post_meta($product_id, '_frame_generation_errors', ['No mockup variants selected or available']);
-            return;
-        }
-    
-        // Generate mockups
-        $this->generate_mockups_for_product($product_id);
+        $this->log_debug("No matching variant found for category {$category_id}");
+        return false;
     }
 
     private function log_debug($message) {
@@ -241,123 +359,82 @@ class Mockup_Generator {
     }
     
     public function generate_mockups_for_product($product_id) {
-        $errors = array();
-        
-        $this->log_debug('Starting mockup generation for product: ' . $product_id);
-        
-        $selected_variants = get_post_meta($product_id, '_selected_variants', true) ?: array();
         $image_id = get_post_thumbnail_id($product_id);
-        
         if (!$image_id) {
-            $this->log_debug('No product image found for product: ' . $product_id);
             return false;
         }
     
-        $image_path = get_attached_file($image_id);
-        if (!$image_path || !file_exists($image_path)) {
-            $this->log_debug('Product image file not found: ' . $image_path);
-            return false;
-        }
-    
-        if (empty($selected_variants)) {
-            $this->log_debug('No variants selected for product: ' . $product_id);
-            return false;
-        }
-    
-        $this->log_debug('Selected variants: ' . print_r($selected_variants, true));
-    
-        // Get image orientation
         $orientation = $this->image_processor->get_image_orientation($image_id);
-        $this->log_debug('Image orientation: ' . $orientation);
+        $enabled_categories = get_post_meta($product_id, '_enabled_categories', true) ?: array();
+        $primary_category = get_post_meta($product_id, '_primary_category', true);
         
-        // Filter variants by orientation
-        $valid_variants = array_filter($selected_variants, function($variant_id) use ($orientation) {
-            $terms = wp_get_object_terms($variant_id, 'mockup_orientation', ['fields' => 'slugs']);
-            $this->log_debug('Variant ' . $variant_id . ' orientations: ' . print_r($terms, true));
-            return empty($terms) || in_array($orientation, $terms);
-        });
-        
-        if (empty($valid_variants)) {
-            $error = 'No valid templates found for image orientation: ' . $orientation;
-            $this->log_debug($error);
-            update_post_meta($product_id, '_frame_generation_errors', [$error]);
-            return false;
-        }
-    
-        $image_hash = md5_file($image_path);
-        
-        // Clean up existing mockups
-        $previous_mockups = get_post_meta($product_id, '_framed_images', true);
-        if (!empty($previous_mockups)) {
-            $this->log_debug('Cleaning up previous mockups: ' . print_r($previous_mockups, true));
-            $this->cleanup_frames($product_id, $previous_mockups);
-        }
-    
         $existing_mockups = array();
+        $gallery_images = array();
         $success = false;
-        
-        foreach ($valid_variants as $variant_id) {
-            $this->log_debug('Processing variant: ' . $variant_id);
+        $category_variant_map = array(); // Add this to track which variant belongs to which category
+    
+        foreach ($enabled_categories as $category_id) {
+            // Get best matching variant for this category based on orientation
+            $variant_id = $this->get_best_variant_for_category($category_id, $orientation);
             
-            $template_image_id = get_post_meta($variant_id, '_template_image', true);
-            if (!$template_image_id) {
-                $error = sprintf('No template image set for variant: %s (ID: %d)', get_the_title($variant_id), $variant_id);
-                $this->log_debug($error);
-                $errors[] = $error;
+            if (!$variant_id) {
                 continue;
             }
     
-            $template_path = get_attached_file($template_image_id);
-            if (!$template_path || !file_exists($template_path)) {
-                $error = sprintf('Template image file not found for variant: %s (ID: %d)', get_the_title($variant_id), $variant_id);
-                $this->log_debug($error);
-                $errors[] = $error;
-                continue;
-            }
-    
-            $settings = [
-                'dimensions' => get_post_meta($variant_id, '_template_dimensions', true),
-                'product_max_size' => get_post_meta($variant_id, '_product_max_size', true),
-                'alignment' => get_post_meta($variant_id, '_product_alignment', true),
-                'offset' => get_post_meta($variant_id, '_product_offset', true),
-                'blend_mode' => get_post_meta($variant_id, '_blend_mode', true)
-            ];
-    
-            $this->log_debug('Template settings: ' . print_r($settings, true));
-    
-            $mockup_image_id = $this->image_processor->generate_mockup(
-                $product_id,
-                $image_id,
-                $template_path,
-                $variant_id,
-                $settings
-            );
+            $mockup_id = $this->generate_single_mockup($product_id, $image_id, $variant_id);
             
-            if ($mockup_image_id) {
-                $this->log_debug('Successfully generated mockup: ' . $mockup_image_id);
-                $existing_mockups[$variant_id] = $mockup_image_id;
+            if ($mockup_id) {
+                $existing_mockups[$variant_id] = $mockup_id;
+                $category_variant_map[$category_id] = $variant_id; // Store the mapping
+                
+                // Add to gallery if not primary
+                if ($category_id !== $primary_category) {
+                    $gallery_images[] = $mockup_id;
+                }
+                
                 $success = true;
-            } else {
-                $error = sprintf('Failed to generate mockup for variant: %s', get_the_title($variant_id));
-                $this->log_debug($error);
-                $errors[] = $error;
             }
         }
     
         if (!empty($existing_mockups)) {
-            $this->log_debug('Saving generated mockups: ' . print_r($existing_mockups, true));
             update_post_meta($product_id, '_framed_images', $existing_mockups);
-            update_post_meta($product_id, '_original_image_hash', $image_hash);
-        }
-    
-        if (!empty($errors)) {
-            $this->log_debug('Saving generation errors: ' . print_r($errors, true));
-            update_post_meta($product_id, '_frame_generation_errors', $errors);
+            update_post_meta($product_id, '_category_variant_map', $category_variant_map); // Save the mapping
+            
+            // Update product gallery
+            if (!empty($gallery_images)) {
+                update_post_meta($product_id, '_product_image_gallery', implode(',', $gallery_images));
+            }
         }
     
         return $success;
     }
-
+    private function generate_single_mockup($product_id, $image_id, $variant_id) {
+        $template_image_id = get_post_meta($variant_id, '_template_image', true);
+        if (!$template_image_id) {
+            return false;
+        }
+    
+        $template_path = get_attached_file($template_image_id);
+        if (!$template_path || !file_exists($template_path)) {
+            return false;
+        }
+    
+        $settings = [
+            'dimensions' => get_post_meta($variant_id, '_template_dimensions', true),
+            'product_max_size' => get_post_meta($variant_id, '_product_max_size', true),
+            'alignment' => get_post_meta($variant_id, '_product_alignment', true),
+            'offset' => get_post_meta($variant_id, '_product_offset', true),
+            'blend_mode' => get_post_meta($variant_id, '_blend_mode', true)
+        ];
+    
+        return $this->image_processor->generate_mockup(
+            $product_id,
+            $image_id,
+            $template_path,
+            $variant_id,
+            $settings
+        );
+    }
     private function cleanup_frames($product_id, $frames) {
         if (!empty($frames)) {
             // Check if it's the old format (nested arrays)

@@ -22,44 +22,7 @@ class Mockup_Generator_Product {
         add_filter('woocommerce_gallery_full_size', [$this, 'modify_gallery_full_size'], 99, 1);
     }
 
-    public function filter_gallery_images($ids, $product) {
-        if (is_admin()) {
-            return $ids;
-        }
-    
-        $product_id = $product->get_id();
-        $enabled = get_post_meta($product_id, '_auto_frame_enabled', true);
-        if ($enabled !== '1') {
-            return $ids;
-        }
-    
-        $framed_images = get_post_meta($product_id, '_framed_images', true);
-        if (empty($framed_images)) {
-            return $ids;
-        }
-    
-        $primary_variant = get_post_meta($product_id, '_primary_variant', true);
-        if (!$primary_variant || !isset($framed_images[$primary_variant])) {
-            return $ids;
-        }
-    
-        $original_image_id = get_post_thumbnail_id($product_id);
-        if (!$original_image_id) {
-            return $ids;
-        }
-        
-        $framed_id = $framed_images[$primary_variant];
-        
-        // If this is the only product image, return empty array
-        if (empty($ids)) {
-            return array();
-        }
-        
-        // For additional gallery images, replace original with framed version
-        return array_map(function($id) use ($original_image_id, $framed_id) {
-            return $id === $original_image_id ? $framed_id : $id;
-        }, $ids);
-    }
+
 
     public function modify_product_image($html, $product) {
         if (is_admin()) {
@@ -72,17 +35,25 @@ class Mockup_Generator_Product {
             return $html;
         }
     
-        $primary_variant = get_post_meta($product_id, '_primary_variant', true);
-        if (!$primary_variant) {
+        $primary_category = get_post_meta($product_id, '_primary_category', true);
+        if (!$primary_category) {
             return $html;
         }
     
-        $framed_images = get_post_meta($product_id, '_framed_images', true);
-        if (!isset($framed_images[$primary_variant])) {
+        // Get the variant ID for the primary category
+        $category_variant_map = get_post_meta($product_id, '_category_variant_map', true);
+        if (!isset($category_variant_map[$primary_category])) {
             return $html;
         }
-
-        $framed_image_id = $framed_images[$primary_variant];
+    
+        $variant_id = $category_variant_map[$primary_category];
+        $framed_images = get_post_meta($product_id, '_framed_images', true);
+        
+        if (!isset($framed_images[$variant_id])) {
+            return $html;
+        }
+    
+        $framed_image_id = $framed_images[$variant_id];
         $framed_metadata = wp_get_attachment_metadata($framed_image_id);
         
         if ($framed_metadata) {
@@ -98,6 +69,42 @@ class Mockup_Generator_Product {
     
         return $html;
     }
+    
+    public function filter_gallery_images($ids, $product) {
+        if (is_admin()) {
+            return $ids;
+        }
+    
+        $product_id = $product->get_id();
+        $enabled = get_post_meta($product_id, '_auto_frame_enabled', true);
+        if ($enabled !== '1') {
+            return $ids;
+        }
+    
+        $primary_category = get_post_meta($product_id, '_primary_category', true);
+        $category_variant_map = get_post_meta($product_id, '_category_variant_map', true);
+        $framed_images = get_post_meta($product_id, '_framed_images', true);
+    
+        if (empty($category_variant_map) || empty($framed_images)) {
+            return $ids;
+        }
+    
+        $original_image_id = get_post_thumbnail_id($product_id);
+        if (!$original_image_id) {
+            return $ids;
+        }
+    
+        $gallery_images = [];
+        
+        // Add non-primary category images to gallery
+        foreach ($category_variant_map as $category_id => $variant_id) {
+            if ($category_id !== $primary_category && isset($framed_images[$variant_id])) {
+                $gallery_images[] = $framed_images[$variant_id];
+            }
+        }
+    
+        return $gallery_images;
+    }
 
     public function modify_thumbnail_html($html) {
         if (is_admin() || !function_exists('wc_get_product')) {
@@ -110,7 +117,44 @@ class Mockup_Generator_Product {
         }
     
         $product_id = $post->ID;
-        return $this->modify_product_image($html, $product_id);
+        $enabled = get_post_meta($product_id, '_auto_frame_enabled', true);
+        if ($enabled !== '1') {
+            return $html;
+        }
+    
+        $primary_category = get_post_meta($product_id, '_primary_category', true);
+        if (!$primary_category) {
+            return $html;
+        }
+    
+        // Get the variant ID for the primary category
+        $category_variant_map = get_post_meta($product_id, '_category_variant_map', true);
+        if (!isset($category_variant_map[$primary_category])) {
+            return $html;
+        }
+    
+        $variant_id = $category_variant_map[$primary_category];
+        $framed_images = get_post_meta($product_id, '_framed_images', true);
+        
+        if (!isset($framed_images[$variant_id])) {
+            return $html;
+        }
+    
+        $framed_image_id = $framed_images[$variant_id];
+        $framed_metadata = wp_get_attachment_metadata($framed_image_id);
+        
+        if ($framed_metadata) {
+            return wp_get_attachment_image($framed_image_id, 'full', false, array(
+                'class' => 'wp-post-image',
+                'width' => $framed_metadata['width'],
+                'height' => $framed_metadata['height'],
+                'data-large_image' => wp_get_attachment_image_url($framed_image_id, 'full'),
+                'data-large_image-width' => $framed_metadata['width'],
+                'data-large_image-height' => $framed_metadata['height']
+            ));
+        }
+    
+        return $html;
     }
 
     public function modify_gallery_image($html, $attachment_id) {
@@ -129,17 +173,25 @@ class Mockup_Generator_Product {
             return $html;
         }
     
-        $primary_variant = get_post_meta($product_id, '_primary_variant', true);
-        if (!$primary_variant) {
+        $primary_category = get_post_meta($product_id, '_primary_category', true);
+        if (!$primary_category) {
             return $html;
         }
     
-        $framed_images = get_post_meta($product_id, '_framed_images', true);
-        if (!isset($framed_images[$primary_variant])) {
+        // Get the variant ID for the primary category
+        $category_variant_map = get_post_meta($product_id, '_category_variant_map', true);
+        if (!isset($category_variant_map[$primary_category])) {
             return $html;
         }
-
-        $framed_image_id = $framed_images[$primary_variant];
+    
+        $variant_id = $category_variant_map[$primary_category];
+        $framed_images = get_post_meta($product_id, '_framed_images', true);
+    
+        if (!isset($framed_images[$variant_id])) {
+            return $html;
+        }
+    
+        $framed_image_id = $framed_images[$variant_id];
         $framed_metadata = wp_get_attachment_metadata($framed_image_id);
         $full_src = wp_get_attachment_image_src($framed_image_id, 'full');
         
@@ -171,7 +223,7 @@ class Mockup_Generator_Product {
                     $figure->setAttribute('data-width', (string)$framed_metadata['width']);
                     $figure->setAttribute('data-height', (string)$framed_metadata['height']);
                 }
-
+    
                 // Update div wrapper if it exists
                 $divs = $dom->getElementsByTagName('div');
                 foreach ($divs as $div) {
@@ -181,7 +233,7 @@ class Mockup_Generator_Product {
                         $div->setAttribute('data-height', (string)$framed_metadata['height']);
                     }
                 }
-
+    
                 // Add woocommerce-product-gallery__image class if not present
                 $parent = $img->parentNode;
                 if ($parent && $parent->nodeName === 'div') {
@@ -190,14 +242,14 @@ class Mockup_Generator_Product {
                         $parent->setAttribute('class', $classes . ' woocommerce-product-gallery__image');
                     }
                 }
-
+    
                 return $dom->saveHTML();
             }
         }
     
         return $html;
     }
-
+    
     public function modify_gallery_image_params($params, $attachment_id, $image_size, $main_image) {
         global $product;
         if (!$product || is_admin()) {
@@ -210,20 +262,28 @@ class Mockup_Generator_Product {
             return $params;
         }
     
-        $primary_variant = get_post_meta($product_id, '_primary_variant', true);
-        if (!$primary_variant) {
+        $primary_category = get_post_meta($product_id, '_primary_category', true);
+        if (!$primary_category) {
             return $params;
         }
     
-        $framed_images = get_post_meta($product_id, '_framed_images', true);
-        if (!isset($framed_images[$primary_variant])) {
+        // Get the variant ID for the primary category
+        $category_variant_map = get_post_meta($product_id, '_category_variant_map', true);
+        if (!isset($category_variant_map[$primary_category])) {
             return $params;
         }
-
-        $framed_image_id = $framed_images[$primary_variant];
+    
+        $variant_id = $category_variant_map[$primary_category];
+        $framed_images = get_post_meta($product_id, '_framed_images', true);
+    
+        if (!isset($framed_images[$variant_id])) {
+            return $params;
+        }
+    
+        $framed_image_id = $framed_images[$variant_id];
         $framed_metadata = wp_get_attachment_metadata($framed_image_id);
         $full_src = wp_get_attachment_image_src($framed_image_id, 'full');
-
+    
         if ($framed_metadata && $full_src) {
             $params = array_merge($params, array(
                 'src' => $full_src[0],
@@ -238,7 +298,7 @@ class Mockup_Generator_Product {
                 'data-thumb' => $full_src[0],
                 'alt' => isset($params['alt']) ? $params['alt'] : '',
             ));
-
+    
             // Remove responsive image attributes
             unset($params['srcset']);
             unset($params['sizes']);
