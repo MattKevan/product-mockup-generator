@@ -85,23 +85,32 @@ class Mockup_Generator_Product {
         $category_variant_map = get_post_meta($product_id, '_category_variant_map', true);
         $framed_images = get_post_meta($product_id, '_framed_images', true);
     
-        if (empty($category_variant_map) || empty($framed_images)) {
-            return $ids;
-        }
-    
-        $original_image_id = get_post_thumbnail_id($product_id);
-        if (!$original_image_id) {
+        if (empty($framed_images)) {
             return $ids;
         }
     
         $gallery_images = [];
-        
-        // Add non-primary category images to gallery
-        foreach ($category_variant_map as $category_id => $variant_id) {
-            if ($category_id !== $primary_category && isset($framed_images[$variant_id])) {
-                $gallery_images[] = $framed_images[$variant_id];
+        $primary_variant_id = isset($category_variant_map[$primary_category]) ? $category_variant_map[$primary_category] : null;
+        $primary_image_id = isset($framed_images[$primary_variant_id]) ? $framed_images[$primary_variant_id] : null;
+    
+        // Add all mockup images except the primary one
+        foreach ($framed_images as $variant_id => $image_id) {
+            if ($image_id !== $primary_image_id) {
+                $gallery_images[] = absint($image_id);
             }
         }
+    
+        // Add any existing gallery images after the mockups
+        if (!empty($ids)) {
+            foreach ($ids as $id) {
+                if (!in_array($id, $gallery_images) && $id !== $primary_image_id) {
+                    $gallery_images[] = absint($id);
+                }
+            }
+        }
+    
+        // Update the product's gallery meta
+        update_post_meta($product_id, '_product_image_gallery', implode(',', $gallery_images));
     
         return $gallery_images;
     }
@@ -173,27 +182,14 @@ class Mockup_Generator_Product {
             return $html;
         }
     
-        $primary_category = get_post_meta($product_id, '_primary_category', true);
-        if (!$primary_category) {
-            return $html;
-        }
-    
-        // Get the variant ID for the primary category
-        $category_variant_map = get_post_meta($product_id, '_category_variant_map', true);
-        if (!isset($category_variant_map[$primary_category])) {
-            return $html;
-        }
-    
-        $variant_id = $category_variant_map[$primary_category];
         $framed_images = get_post_meta($product_id, '_framed_images', true);
-    
-        if (!isset($framed_images[$variant_id])) {
+        if (!$framed_images || !in_array($attachment_id, $framed_images)) {
             return $html;
         }
     
-        $framed_image_id = $framed_images[$variant_id];
-        $framed_metadata = wp_get_attachment_metadata($framed_image_id);
-        $full_src = wp_get_attachment_image_src($framed_image_id, 'full');
+        $framed_metadata = wp_get_attachment_metadata($attachment_id);
+        $full_src = wp_get_attachment_image_src($attachment_id, 'full');
+        $thumb_src = wp_get_attachment_image_src($attachment_id, 'thumbnail');
         
         if ($framed_metadata && $full_src) {
             $dom = new DOMDocument();
@@ -219,7 +215,7 @@ class Mockup_Generator_Product {
                 $figures = $dom->getElementsByTagName('figure');
                 if ($figures->length > 0) {
                     $figure = $figures->item(0);
-                    $figure->setAttribute('data-thumb', $full_src[0]);
+                    $figure->setAttribute('data-thumb', $thumb_src ? $thumb_src[0] : $full_src[0]);
                     $figure->setAttribute('data-width', (string)$framed_metadata['width']);
                     $figure->setAttribute('data-height', (string)$framed_metadata['height']);
                 }
@@ -228,18 +224,9 @@ class Mockup_Generator_Product {
                 $divs = $dom->getElementsByTagName('div');
                 foreach ($divs as $div) {
                     if ($div->hasAttribute('data-thumb')) {
-                        $div->setAttribute('data-thumb', $full_src[0]);
+                        $div->setAttribute('data-thumb', $thumb_src ? $thumb_src[0] : $full_src[0]);
                         $div->setAttribute('data-width', (string)$framed_metadata['width']);
                         $div->setAttribute('data-height', (string)$framed_metadata['height']);
-                    }
-                }
-    
-                // Add woocommerce-product-gallery__image class if not present
-                $parent = $img->parentNode;
-                if ($parent && $parent->nodeName === 'div') {
-                    $classes = $parent->getAttribute('class');
-                    if (strpos($classes, 'woocommerce-product-gallery__image') === false) {
-                        $parent->setAttribute('class', $classes . ' woocommerce-product-gallery__image');
                     }
                 }
     
